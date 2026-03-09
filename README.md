@@ -12,39 +12,44 @@ Transform insurance claims processing into an AI-native, enterprise-ready system
 
 ```mermaid
 flowchart LR
-    subgraph Input["📄 Input"]
+    subgraph Input["📄 Inputs"]
         IMG[Claim Images]
-        DOCS[Policy Documents]
+        POL[Policy Documents]
     end
 
-    subgraph Processing["🤖 AI Processing"]
-        OCR[OCR Agent<br/>Mistral AI]
-        JSON[JSON Agent<br/>GPT-4.1-mini]
-        OCR --> JSON
+    subgraph Knowledge["📚 Knowledge Base"]
+        INGEST[Chunking + Vectorization]
+        SEARCH[Azure AI Search]
+        POL --> INGEST --> SEARCH
     end
 
-    subgraph Platform["☁️ Azure Platform"]
-        FOUNDRY[Microsoft Foundry]
-        SEARCH[AI Search]
-        INSIGHTS[App Insights]
+    subgraph Agents["🤖 Claims Processing Agents (Microsoft Foundry)"]
+        OCR[Document Extraction Agent<br/>GPT-4.1-mini Vision / Mistral / Azure DI]
+        JSON[JSON Structuring Agent]
+        VALID[Policy Validation Agent]
+        OCR --> JSON --> VALID
     end
 
-    subgraph Deployment["🚀 Deployment"]
-        API[REST API<br/>FastAPI]
-        ACA[Container Apps]
+    subgraph App["🖥️ Application Layer"]
         UI[Streamlit UI]
+        API[FastAPI API]
+        UI --> API
+    end
+
+    subgraph Obs["📈 Foundry Observability"]
+        OTEL[OpenTelemetry Tracing]
+        INSIGHTS[Application Insights]
+        OTEL --> INSIGHTS
     end
 
     IMG --> OCR
-    DOCS --> SEARCH
-    FOUNDRY --> Processing
-    JSON --> API
-    API --> ACA
-    ACA --> UI
-    Processing --> INSIGHTS
+    API --> VALID
+    SEARCH --> VALID
+
+    OCR -. traces .-> OTEL
+    JSON -. traces .-> OTEL
+    VALID -. traces .-> OTEL
 ```
-
-
 
 ## Learning Objectives 🎯
 
