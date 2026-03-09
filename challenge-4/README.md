@@ -96,7 +96,7 @@ cd challenge-4
 pip install -r requirements.txt
 
 # Test the workflow with a sample image
-python workflow_orchestrator.py ../challenge-0/data/statements/crash1_front.jpeg
+python workflow_orchestrator.py ../data/statements/crash1_front.jpeg
 ```
 
 ### Task 2: Review and Test the API Server
@@ -234,7 +234,7 @@ curl https://$APP_URL/health
 
 # Test claim processing
 curl -X POST https://$APP_URL/process-claim/upload \
-  -F "file=@../challenge-0/data/statements/crash1_front.jpeg" \
+  -F "file=@../data/statements/crash1_front.jpeg" \
   | jq .
 ```
 
@@ -317,7 +317,7 @@ This policy **generates a unique boundary** string for the multipart form data, 
 
 #### 6.3 Test in APIM Console
 
-1. Download an image file to test (challenge-0/data/statements)
+1. Download an image file to test (data/statements)
 2. Go to the **Test** tab for the `/process-claim/upload` operation
 3. Select **Binary** mode (not Raw)
 

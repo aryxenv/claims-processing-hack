@@ -61,7 +61,7 @@ async def main():
     print("\n" + "=" * 60)
     
     # Get test image path
-    test_image = "/workspaces/claims-processing-hack/challenge-0/data/statements/crash1_front.jpeg"
+    test_image = "/workspaces/claims-processing-hack/data/statements/crash1_front.jpeg"
     
     if not os.path.exists(test_image):
         print(f"❌ Test image not found: {test_image}")

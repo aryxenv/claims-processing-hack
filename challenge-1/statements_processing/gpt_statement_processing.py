@@ -10,7 +10,7 @@ from collections import defaultdict
 load_dotenv()
 
 # Statements files location
-STATEMENTS_IMAGE_FOLDER = '../../challenge-0/data/statements/'
+STATEMENTS_IMAGE_FOLDER = '../../data/statements/'
 STATEMENTS_OUTPUT_LOCATION = '../output/gpt/'
 
 # Azure OpenAI credentials
@@ -21,14 +21,14 @@ AZURE_OPENAI_API_VERSION = os.getenv('AZURE_OPENAI_API_VERSION')
 
 # Initialize Azure OpenAI Client
 openai_client = AzureOpenAI(
-    azure_endpoint=AZURE_OPENAI_ENDPOINT,
+    azure_endpoint=AZURE_OPENAI_ENDPOINT or "https://claims-processing-hack.openai.azure.com/",
     api_key=AZURE_OPENAI_KEY,
     api_version=AZURE_OPENAI_API_VERSION
 )
 
 print(f"✅ Configuration loaded:")
-print(f"   OpenAI API Version: {AZURE_OPENAI_API_VERSION}")
-print(f"   OpenAI Deployment: {AZURE_OPENAI_DEPLOYMENT_NAME}")
+print(f"   OpenAI API Version: {AZURE_OPENAI_API_VERSION or 'default'}")
+print(f"   OpenAI Deployment: {AZURE_OPENAI_DEPLOYMENT_NAME or 'gpt-4.1-mini'}")
 
 # Function to encode image to base64
 def encode_image(image_path):
@@ -53,7 +53,7 @@ def ocr_using_gpt4(front_image_path, back_image_path):
     Combine information from both front and back images into a single comprehensive JSON object."""
     
     response = openai_client.chat.completions.create(
-        model=AZURE_OPENAI_DEPLOYMENT_NAME,
+        model=AZURE_OPENAI_DEPLOYMENT_NAME or "gpt-4.1-mini",
         messages=[
             {
                 "role": "user",

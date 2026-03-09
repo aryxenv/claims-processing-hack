@@ -796,17 +796,16 @@ if __name__ == "__main__":
         test_file = sys.argv[1]
         # If the provided path doesn't exist, check if it's relative to challenge-0
         if not os.path.exists(test_file):
-            # Try challenge-0 data directory
-            alt_path = os.path.join(os.path.dirname(__file__), "..", "..", "challenge-0", "data", "statements", os.path.basename(test_file))
+            # Try root data directory
+            alt_path = os.path.join(os.path.dirname(__file__), "..", "..", "data", "statements", os.path.basename(test_file))
             if os.path.exists(alt_path):
                 test_file = alt_path
     else:
         # Try to find a test file in the data directories
-        # Data is stored in challenge-0/data/statements
+        # Data is stored in data/statements
         base_dir = os.path.dirname(__file__)
         data_dirs = [
-            os.path.join(base_dir, "..", "..", "challenge-0", "data", "statements"),  # challenge-0
-            os.path.join(base_dir, "..", "data", "statements"),  # challenge-1
+            os.path.join(base_dir, "..", "..", "data", "statements"),  # root data dir
         ]
         test_files = []
         for data_dir in data_dirs:
@@ -820,7 +819,7 @@ if __name__ == "__main__":
         print("\n❌ No test file found!")
         print("Usage: python mistral_doc_intel_annotations.py <path_to_document>")
         print("\nExample:")
-        print("  python mistral_doc_intel_annotations.py ../data/statements/crash1_front.jpeg")
+        print("  python mistral_doc_intel_annotations.py ../../data/statements/crash1_front.jpeg")
         sys.exit(1)
     
     print(f"\n📄 Test file: {test_file}")
