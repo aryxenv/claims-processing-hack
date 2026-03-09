@@ -41,7 +41,7 @@ Now you can manage your resources through your CLI. To deploy the resources on A
 az group create --name claims-processing-hack --location swedencentral
 ```
 
-2. Verify that resource provider `[Microsoft.AlertsManagement](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types#register-resource-provider-1)` is registered in your Azure subscription
+2. Verify that resource provider [`Microsoft.AlertsManagement`](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types#register-resource-provider-1) is registered in your Azure subscription
 
 ```bash
 az provider show --namespace Microsoft.AlertsManagement --query registrationState -o tsv
@@ -72,7 +72,7 @@ Another way to deploy is to just click on this button!
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fclaims-processing-hack%2Fmain%2Fchallenge-0%2Finfra%2Fazuredeploy.json)
 
 > [!NOTE]
-> You will still need to register resource provider `[Microsoft.AlertsManagement](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types#register-resource-provider-1)` as documented above.
+> You will still need to register resource provider [`Microsoft.AlertsManagement`](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types#register-resource-provider-1) as documented above.
 
 Resource deployment can take up to 10 minutes, afterwards you'll be able to find all the Azure resources you need in your resource group.
 
