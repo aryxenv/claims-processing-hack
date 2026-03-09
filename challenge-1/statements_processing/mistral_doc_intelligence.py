@@ -18,7 +18,7 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 # Statements files location (match GPT script structure)
-STATEMENTS_IMAGE_FOLDER = "../../challenge-0/data/statements/"
+STATEMENTS_IMAGE_FOLDER = "../../data/statements/"
 STATEMENTS_OUTPUT_LOCATION = "../output/mistral/"
 
 
@@ -68,7 +68,7 @@ def get_mistral_doc_ai_client():
     )
 
     # Endpoint format: https://<resource>.cognitiveservices.azure.com/providers/mistral/azure/ocr
-    endpoint = mistral_endpoint.rstrip("/") + "/providers/mistral/azure/ocr"
+    endpoint = mistral_endpoint.rstrip("/") + "/providers/mistral/azure/ocr" # type: ignore
 
     return {"endpoint": endpoint, "api_key": mistral_api_key, "model": mistral_model}
 

@@ -20,7 +20,7 @@
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}/challenge-1/statements_processing",
       "args": [
-        "../data/statements/crash1_front.jpeg"
+        "../../data/statements/crash1_front.jpeg"
       ]
     }
   ]

@@ -10,7 +10,7 @@ echo "╚═══════════════════════�
 echo ""
 
 # Test image path
-TEST_IMAGE="../challenge-0/data/statements/crash1_front.jpeg"
+TEST_IMAGE="../data/statements/crash1_front.jpeg"
 
 if [ ! -f "$TEST_IMAGE" ]; then
     echo "❌ Test image not found: $TEST_IMAGE"

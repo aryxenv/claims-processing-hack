@@ -206,7 +206,7 @@ for annotation in result['annotations']:
 
 ```bash
 cd challenge-1/statements_processing
-python mistral_doc_intel_annotations.py ../../challenge-0/data/statements/crash1_front.jpeg
+python mistral_doc_intel_annotations.py ../../data/statements/crash1_front.jpeg
 ```
 
 This will process the claim statement, extract structured data with annotations, and export the results to a JSON file showing the exact location of each extracted field.

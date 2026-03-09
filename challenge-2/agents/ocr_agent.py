@@ -229,7 +229,7 @@ def main():
     
     try:
         # Get image path from CLI args or use default
-        test_image_path = sys.argv[1] if len(sys.argv) > 1 else "/workspaces/claims-processing-hack/challenge-0/data/statements/crash1_front.jpeg"
+        test_image_path = sys.argv[1] if len(sys.argv) > 1 else "/workspaces/claims-processing-hack/data/statements/crash1_front.jpeg"
         
         # Create output directory for OCR results
         output_dir = "/workspaces/claims-processing-hack/challenge-2/ocr_results"

@@ -42,7 +42,7 @@ The OCR Agent uses Mistral Document AI to extract text from claim images.
 cd challenge-2/agents
 
 # Run the OCR agent on a sample claim image
-python ocr_agent.py ../../challenge-0/data/statements/crash1_front.jpeg
+python ocr_agent.py ../../data/statements/crash1_front.jpeg
 ```
 
 **What it does:**
