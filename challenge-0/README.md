@@ -87,10 +87,10 @@ After deploying resources, configure environment variables in the `.env` file. E
 **Then run the get-keys script with your resource group name:**
 
 ```bash
-cd challenge-0 && ./get-keys.sh --resource-group YOUR_RESOURCE_GROUP_NAME
+cd challenge-0 && ./get-keys.sh --resource-group claims-processing-hack
 ```
 
-Replace `YOUR_RESOURCE_GROUP_NAME` with the actual name of the resource group created.
+Replace `claims-processing-hack` with your resource group name if it's different.
 
 This script will:
 
