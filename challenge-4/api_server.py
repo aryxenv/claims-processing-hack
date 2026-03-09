@@ -12,8 +12,8 @@ import base64
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, File, UploadFile, HTTPException # type: ignore
+from fastapi.responses import JSONResponse # type: ignore
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -136,7 +136,7 @@ async def process_claim_base64(request: ClaimProcessRequest):
         image_data = base64.b64decode(request.image_base64)
         
         # Save to temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=Path(request.filename).suffix) as tmp_file:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=Path(request.filename).suffix) as tmp_file: # type: ignore
             tmp_file.write(image_data)
             tmp_path = tmp_file.name
         

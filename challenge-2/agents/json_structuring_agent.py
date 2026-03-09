@@ -96,7 +96,7 @@ Extract all visible text from the provided JPEG image and structure it into a cl
 - Do not describe or analyze any pictures, photos, or visual content - extract text only"""
 
 
-def structure_ocr_to_json(ocr_text: str, source_file: str = None, project_client=None, agent=None) -> dict:
+def structure_ocr_to_json(ocr_text: str, source_file: str, project_client=None, agent=None) -> dict:
     """
     Convert OCR text into structured JSON format using GPT-4o-mini agent.
     
@@ -116,6 +116,8 @@ def structure_ocr_to_json(ocr_text: str, source_file: str = None, project_client
         should_close_client = False
         if project_client is None:
             logger.info("Creating AI Project Client...")
+            if not project_endpoint:
+                raise ValueError("AI_FOUNDRY_PROJECT_ENDPOINT environment variable must be set")
             project_client = AIProjectClient(
                 endpoint=project_endpoint,
                 credential=DefaultAzureCredential(),
@@ -282,6 +284,9 @@ def main():
         print(f"📄 Processing file: {input_file}\n")
         
         # Create AI Project Client
+        if not project_endpoint:
+            raise ValueError(
+                "AI_FOUNDRY_PROJECT_ENDPOINT environment variable must be set")
         project_client = AIProjectClient(
             endpoint=project_endpoint,
             credential=DefaultAzureCredential(),

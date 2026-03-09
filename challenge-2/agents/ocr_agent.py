@@ -32,8 +32,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Configuration
-project_endpoint = os.environ.get("AI_FOUNDRY_PROJECT_ENDPOINT")
-model_deployment_name = os.environ.get("MODEL_DEPLOYMENT_NAME")
+project_endpoint = os.environ.get("AI_FOUNDRY_PROJECT_ENDPOINT") or "https://claims-processing-hack.azure.com/"
+model_deployment_name = os.environ.get("MODEL_DEPLOYMENT_NAME") or "gpt-4.1-mini"
 
 
 def encode_file_to_base64(file_path: str) -> tuple[str, str]:
@@ -229,7 +229,7 @@ def main():
     
     try:
         # Get image path from CLI args or use default
-        test_image_path = sys.argv[1] if len(sys.argv) > 1 else "/workspaces/claims-processing-hack/data/statements/crash1_front.jpeg"
+        test_image_path = sys.argv[1] if len(sys.argv) > 1 else "/workspaces/claims-processing-hack/challenge-0/data/statements/crash1_front.jpeg"
         
         # Create output directory for OCR results
         output_dir = "/workspaces/claims-processing-hack/challenge-2/ocr_results"
