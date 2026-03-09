@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 ENDPOINT = os.environ.get("AI_FOUNDRY_PROJECT_ENDPOINT")
-MODEL_DEPLOYMENT_NAME = os.environ.get("MODEL_DEPLOYMENT_NAME") or "gpt-4o-mini"
+MODEL_DEPLOYMENT_NAME = os.environ.get("MODEL_DEPLOYMENT_NAME", "gpt-4o-mini")
 
 
 async def process_claim_workflow(image_path: str) -> dict:

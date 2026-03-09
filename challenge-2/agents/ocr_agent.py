@@ -32,8 +32,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Configuration
-project_endpoint = os.environ.get("AI_FOUNDRY_PROJECT_ENDPOINT") or "https://claims-processing-hack.azure.com/"
-model_deployment_name = os.environ.get("MODEL_DEPLOYMENT_NAME") or "gpt-4.1-mini"
+project_endpoint = os.environ.get("AI_FOUNDRY_PROJECT_ENDPOINT")
+model_deployment_name = os.environ.get("MODEL_DEPLOYMENT_NAME", "gpt-4.1-mini")
 
 
 def encode_file_to_base64(file_path: str) -> tuple[str, str]:
@@ -236,6 +236,9 @@ def main():
         os.makedirs(output_dir, exist_ok=True)
         
         # Create AI Project Client
+        if not project_endpoint:
+            raise ValueError(
+                "AI_FOUNDRY_PROJECT_ENDPOINT environment variable must be set")
         project_client = AIProjectClient(
             endpoint=project_endpoint,
             credential=DefaultAzureCredential(),
