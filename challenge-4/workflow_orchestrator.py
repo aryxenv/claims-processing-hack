@@ -23,7 +23,7 @@ if os.path.exists(os.path.join(os.path.dirname(__file__), '..', 'challenge-2', '
 else:
     # Container deployment: challenge-2 is in the same directory as the app
     sys.path.append(os.path.join(os.path.dirname(__file__), 'challenge-2', 'agents'))
-from ocr_agent import extract_text_with_ocr
+from ocr_agent import extract_text_with_ocr # type: ignore
 
 # Load environment
 load_dotenv(override=True)
@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 ENDPOINT = os.environ.get("AI_FOUNDRY_PROJECT_ENDPOINT")
-MODEL_DEPLOYMENT_NAME = os.environ.get("MODEL_DEPLOYMENT_NAME")
+MODEL_DEPLOYMENT_NAME = os.environ.get("MODEL_DEPLOYMENT_NAME", "gpt-4o-mini")
 
 
 async def process_claim_workflow(image_path: str) -> dict:
@@ -65,6 +65,10 @@ async def process_claim_workflow(image_path: str) -> dict:
     
     # Step 2: OCR Text Extraction Agent - Convert OCR text to structured JSON
     logger.info("📊 Step 2: OCR Text Extraction Agent - Converting to structured JSON...")
+
+    if not ENDPOINT:
+        raise ValueError(
+        "AI_FOUNDRY_PROJECT_ENDPOINT environment variable must be set")
     
     # Create AI Project Client
     with AIProjectClient(
