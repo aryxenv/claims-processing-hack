@@ -12,7 +12,7 @@ import base64
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -50,6 +50,9 @@ class ClaimProcessResponse(BaseModel):
     error: Optional[str] = None
 
 
+DEFAULT_CLAIM_FILENAME = "claim_image.jpg"
+
+
 @app.get("/", response_model=HealthResponse)
 async def root():
     """Root endpoint - health check"""
@@ -71,33 +74,53 @@ async def health():
 
 
 @app.post("/process-claim/upload", response_model=ClaimProcessResponse)
-async def process_claim_upload(file: UploadFile = File(...)):
+async def process_claim_upload(request: Request):
     """
-    Process a claim image using file upload
-    
+    Process a claim image using file upload (multipart/form-data) or raw binary
+    (application/octet-stream). Accepting raw binary removes the need for an APIM
+    inbound body-transformation policy, which would otherwise interfere with MCP
+    streaming and prevent tool discovery.
+
     Args:
-        file: Image file (JPEG, PNG, etc.)
-        
+        request: HTTP request carrying either a multipart/form-data file or a raw
+                 binary body.
+
     Returns:
         Structured claim data
     """
-    logger.info(f"📸 Received claim image upload: {file.filename}")
-    
+    content_type = request.headers.get("content-type", "")
+
     try:
-        # Save uploaded file to temporary location
-        with tempfile.NamedTemporaryFile(delete=False, suffix=Path(file.filename).suffix) as tmp_file:
+        if "multipart/form-data" in content_type:
+            # Standard file upload (e.g. curl -F file=@image.jpg)
+            form = await request.form()
+            file = form.get("file")
+            if not file:
+                raise HTTPException(status_code=400, detail='No file provided in form field "file"')
             content = await file.read()
+            filename = file.filename or DEFAULT_CLAIM_FILENAME
+            logger.info(f"📸 Received multipart claim image upload: {filename}")
+        else:
+            # Raw binary upload (e.g. APIM test console sending application/octet-stream)
+            content = await request.body()
+            filename = DEFAULT_CLAIM_FILENAME
+            logger.info("📸 Received raw binary claim image upload")
+
+        suffix = Path(filename).suffix or ".jpg"
+
+        # Save to temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
             tmp_file.write(content)
             tmp_path = tmp_file.name
-        
+
         logger.info(f"💾 Saved to temporary file: {tmp_path}")
-        
+
         # Process with workflow
         result = await process_claim_workflow(tmp_path)
-        
+
         # Clean up temporary file
         os.unlink(tmp_path)
-        
+
         # Check for errors
         if "error" in result:
             logger.error(f"❌ Workflow error: {result.get('error')}")
@@ -106,13 +129,15 @@ async def process_claim_upload(file: UploadFile = File(...)):
                 error=result.get("error"),
                 data=result
             )
-        
+
         logger.info("✅ Successfully processed claim")
         return ClaimProcessResponse(
             success=True,
             data=result
         )
-        
+
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"❌ Error processing claim: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))

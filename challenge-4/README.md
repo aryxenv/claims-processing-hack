@@ -261,9 +261,11 @@ In this step, you'll import your Container App API into Azure API Management. Th
 
 Once added, APIM acts as a reverse proxy, forwarding requests to your Container App while applying policies, authentication, and rate limiting.
 
-#### 6.2 Configure APIM Policy for Binary Uploads
+#### 6.2 Configure APIM Policy for the Upload Operation
 
-The APIM test console sends binary data differently than FastAPI expects. You need to add a policy to transform the binary data into proper multipart form data.
+The API server now accepts **raw binary uploads** (`application/octet-stream`) in addition to the standard multipart form-data format. This means the APIM inbound policy no longer needs to read or rewrite the request body, which previously caused MCP `tools/list` to time out (body access triggers response buffering that breaks MCP streaming).
+
+> **Why this matters for MCP:** Any APIM policy that accesses `context.Request.Body` or `context.Response.Body` can enable response buffering that interferes with the Server-Sent Events streaming required by MCP servers. The simplified policy below avoids all body access so that `tools/list` and other MCP operations work correctly.
 
 **Steps:**
 
@@ -273,7 +275,7 @@ The APIM test console sends binary data differently than FastAPI expects. You ne
 
 ![alt text](images/apim1.png)
 
-5. Replace the entire policy with:
+5. Replace the entire policy with the following simplified policy (no body transformation required):
 
 ```xml
 <policies>
@@ -282,22 +284,6 @@ The APIM test console sends binary data differently than FastAPI expects. You ne
         <set-method>POST</set-method>
         <rewrite-uri id="apim-generated-policy" template="/process-claim/upload" />
         <set-header id="apim-generated-policy" name="Ocp-Apim-Subscription-Key" exists-action="delete" />
-        <set-variable name="boundary" value="@(Guid.NewGuid().ToString())" />
-        <set-body>@{
-            var boundary = context.Variables.GetValueOrDefault<string>("boundary");
-            var body = context.Request.Body.As<byte[]>(preserveContent: true);
-            
-            var header = $"--{boundary}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"uploaded_file.jpeg\"\r\nContent-Type: image/jpeg\r\n\r\n";
-            var footer = $"\r\n--{boundary}--\r\n";
-            
-            var headerBytes = System.Text.Encoding.UTF8.GetBytes(header);
-            var footerBytes = System.Text.Encoding.UTF8.GetBytes(footer);
-            
-            return headerBytes.Concat(body).Concat(footerBytes).ToArray();
-        }</set-body>
-        <set-header name="Content-Type" exists-action="override">
-            <value>@($"multipart/form-data; boundary={context.Variables.GetValueOrDefault<string>("boundary")}")</value>
-        </set-header>
     </inbound>
     <backend>
         <base />
@@ -313,7 +299,7 @@ The APIM test console sends binary data differently than FastAPI expects. You ne
 
 6. Click **Save**
 
-This policy **generates a unique boundary** string for the multipart form data, **reads the binary body** sent from APIM test console, and **wraps it in multipart headers** with proper formatting (including Content-Disposition header specifying the form field name "file", Content-Type header for the image, and multipart boundary markers). It then **sets the Content-Type header** with the boundary parameter and **transforms raw binary → proper multipart/form-data** that FastAPI expects.
+This policy routes the request to the correct backend and strips the internal subscription-key header without touching the request body. The FastAPI server handles both raw binary and multipart form-data transparently.
 
 #### 6.3 Test in APIM Console
 
